@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+
+	"github.com/skip2/go-qrcode"
 )
 
 func StartServer(dir string, port int) {
@@ -20,6 +22,14 @@ func StartServer(dir string, port int) {
 	ip := getLocalIP()
 	url := fmt.Sprintf("http://%s:%d", ip, port)
 	fmt.Printf("📂 Serving %s at:\n➡️  %s\n", absDir, url)
+
+	// Generate and display QR code
+	qr, err := qrcode.New(url, qrcode.Medium)
+	if err != nil {
+		log.Fatalf("QR generation failed: %v", err)
+	}
+	fmt.Println("\n📱 Scan this QR to open:")
+	fmt.Println(qr.ToSmallString(false))
 
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
