@@ -1,4 +1,4 @@
-# 🚀 GoShare CLI
+# GoShare CLI
 
 [![Go Version](https://img.shields.io/badge/Go-1.24.4+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -7,14 +7,14 @@
 
 **GoShare CLI** is a modern, lightweight command-line tool that transforms file sharing over Wi-Fi networks. Built with Go, it provides an elegant, responsive web interface for browsing, navigating, and downloading files from any device on your network—no cloud storage required.
 
-## ⚡ Quick Start
+## Quick Start
 
-### 1️⃣ Install GoShare (One Command)
+### Install GoShare (One Command)
 ```bash
 go install github.com/sudo-init-do/goshare@latest
 ```
 
-### 2️⃣ Share Files Instantly
+### Share Files Instantly
 ```bash
 # Share current directory
 goshare
@@ -29,37 +29,37 @@ goshare -d ~/Documents
 goshare --ngrok
 ```
 
-### 3️⃣ Access from Any Device
+### Access from Any Device
 - **Scan the QR code** displayed in your terminal
 - **Or visit the URL** shown (e.g., `http://192.168.1.100:8080`)
 - **Browse and download** files through the beautiful web interface
 
-## ✨ Features
+## Features
 
-### 🌐 **Beautiful Web Interface**
+### Beautiful Web Interface
 - **Modern Design**: Clean, responsive interface with Tailwind CSS
 - **File Icons**: Visual indicators for documents, images, videos, code files
 - **Smart Navigation**: Breadcrumb trails and intuitive folder browsing
 - **Mobile-First**: Perfect experience on phones, tablets, and desktops
 - **One-Click Downloads**: Download any file with a single click
 
-### 📱 **Instant Access**
+### Instant Access
 - **QR Code Generation**: Automatic QR codes for instant device connection
 - **Local Network**: Share files instantly across Wi-Fi networks
 - **No Setup Required**: Works immediately without configuration
 
-### 🔐 **Enterprise-Grade Security**
+### Enterprise-Grade Security
 - **Password Protection**: Optional HTTP Basic Authentication
 - **Path Security**: Bulletproof protection against directory traversal
 - **Controlled Access**: Users can only access shared directories
 - **MIME Detection**: Secure content type handling
 
-### 🌍 **Global Sharing**
+### Global Sharing
 - **Internet Access**: Expose files worldwide using ngrok integration
 - **Public URLs**: Share with anyone, anywhere with secure tunneling
 - **Temporary Sharing**: Perfect for one-time file distributions
 
-## 🚀 Installation Options
+## Installation Options
 
 ### Option 1: Direct Install (Recommended)
 ```bash
@@ -84,11 +84,11 @@ go build -o goshare .
 - **Go 1.24.4+** (for Option 1 & 3)
 - **ngrok** (optional, for internet sharing)
 
-## 📖 Usage Guide
+## Usage Guide
 
 ### Basic Commands
 
-#### 🏠 Share Current Directory
+#### Share Current Directory
 ```bash
 goshare
 ```
@@ -96,21 +96,21 @@ goshare
 - Server runs on `http://localhost:8080`
 - Displays QR code for instant mobile access
 
-#### 📁 Share Specific Directory
+#### Share Specific Directory
 ```bash
 goshare -d /path/to/your/files
 goshare -d ~/Documents
 goshare -d "C:\Users\John\Pictures"  # Windows
 ```
 
-#### 🔧 Custom Port
+#### Custom Port
 ```bash
 goshare -p 9000
 ```
 
 ### Advanced Features
 
-#### 🔐 Password Protection
+#### Password Protection
 ```bash
 goshare --password mysecretpassword
 goshare --password "complex password 123" -d ~/Documents
@@ -119,7 +119,7 @@ goshare --password "complex password 123" -d ~/Documents
 - Users must enter the password to access files
 - Password appears in username field (leave username empty)
 
-#### 🌍 Internet Sharing (ngrok)
+#### Internet Sharing (ngrok)
 ```bash
 goshare --ngrok
 goshare --ngrok --password sharefiles -d ~/shared-files
@@ -130,25 +130,25 @@ goshare --ngrok --password sharefiles -d ~/shared-files
 
 ### Real-World Examples
 
-#### 📸 Share Photos with Family
+#### Share Photos with Family
 ```bash
 # Share vacation photos
 goshare -d ~/Pictures/Vacation2024 --password family123
 ```
 
-#### 📋 Business File Distribution
+#### Business File Distribution
 ```bash
 # Share presentation materials
 goshare -d ~/Presentations --ngrok --password meeting2024
 ```
 
-#### 🚀 Developer File Sharing
+#### Developer File Sharing
 ```bash
 # Share build artifacts
 goshare -d ./dist -p 3000
 ```
 
-## 🎯 Command Reference
+## Command Reference
 
 | Command | Short | Description | Example |
 |---------|-------|-------------|---------|
@@ -158,12 +158,46 @@ goshare -d ./dist -p 3000
 | `--ngrok` | | Internet sharing | `goshare --ngrok` |
 | `--help` | `-h` | Show help | `goshare --help` |
 
-### 💡 Pro Tips
+### Pro Tips
 
 1. **Combine Options**: `goshare -d ~/Files -p 8080 --password secure --ngrok`
 2. **Quick Access**: After running, just scan the QR code with your phone
 3. **Security**: Always use passwords when sharing over the internet
 4. **File Selection**: Navigate to the specific folder you want to share before running `goshare`
+
+## Web Interface Features
+
+GoShare's web interface provides a premium file browsing experience:
+
+### Modern Design
+- **Responsive Layout**: Automatically adapts to screen size
+- **Clean Typography**: Easy-to-read fonts and proper spacing
+- **Professional Styling**: Tailwind CSS for consistent, modern appearance
+- **Mobile Optimized**: Touch-friendly buttons and navigation
+
+### File Management
+- **File Type Icons**: Instant visual recognition of file types
+- **Size Information**: Human-readable file sizes (KB, MB, GB)
+- **Modification Dates**: See when files were last changed
+- **Folder Navigation**: Click folders to explore, use breadcrumbs to go back
+
+### Supported File Types
+
+| Category | File Types | Visual |
+|----------|------------|--------|
+| **Documents** | PDF, Word, Excel, PowerPoint | Document icons |
+| **Images** | JPEG, PNG, GIF, SVG, WebP, BMP | Image icons |
+| **Videos** | MP4, AVI, MKV, MOV, WMV | Video icons |
+| **Audio** | MP3, WAV, FLAC, AAC, OGG | Audio icons |
+| **Archives** | ZIP, RAR, 7Z, TAR, GZ | Archive icons |
+| **Code** | Go, Python, JavaScript, C++, Java, PHP | Code icons |
+| **Web** | HTML, CSS, JSON, XML | Web icons |
+
+### Download Options
+- **Direct Download**: Click file names to view/download
+- **Force Download**: Use download buttons to force file download
+- **Batch Access**: Navigate freely between folders
+- **Secure Serving**: Proper MIME types and headers
 
 ## 🖥️ Web Interface Features
 
@@ -216,7 +250,7 @@ GoShare's web interface provides a premium file browsing experience:
         │ ◄─── File Download ────┤                        │
 ```
 
-### 🛡️ **Security Model**
+### Security Model
 
 1. **Path Sanitization**: All file paths are cleaned and validated
 2. **Root Containment**: Users cannot access files outside the shared directory
@@ -224,7 +258,7 @@ GoShare's web interface provides a premium file browsing experience:
 4. **MIME Security**: Proper content type detection prevents XSS attacks
 5. **No Write Access**: Read-only file sharing (no uploads or modifications)
 
-### 🌐 **Network Flow**
+### Network Flow
 
 1. **Server Start**: GoShare binds to specified port and discovers local IP
 2. **QR Generation**: Creates QR code linking to `http://[LOCAL_IP]:[PORT]`
@@ -232,16 +266,16 @@ GoShare's web interface provides a premium file browsing experience:
 4. **Template Rendering**: Dynamic HTML generation for directory listings
 5. **File Serving**: Secure file downloads with proper headers
 
-### 🚀 **Performance Features**
+### Performance Features
 
 - **Efficient File Serving**: Uses Go's optimized `http.ServeContent`
 - **Concurrent Connections**: Handles multiple users simultaneously
 - **Memory Efficient**: Streams large files without loading into memory
 - **Fast Directory Listing**: Optimized directory scanning and sorting
 
-## 🌟 Use Cases & Scenarios
+## Use Cases & Scenarios
 
-### 👨‍💼 **Business & Professional**
+### Business & Professional
 ```bash
 # Share meeting presentations
 goshare -d ~/Presentations --password meeting2024
@@ -253,7 +287,7 @@ goshare -d ./project-assets --ngrok --password team123
 goshare -d ~/Reports -p 9000 --password client2024
 ```
 
-### 🏠 **Personal & Family**
+### Personal & Family
 ```bash
 # Share vacation photos
 goshare -d ~/Pictures/Vacation2024
@@ -265,7 +299,7 @@ goshare -d ~/Downloads
 goshare -d ~/Documents --password family
 ```
 
-### 💻 **Development & Tech**
+### Development & Tech
 ```bash
 # Share build artifacts
 goshare -d ./dist -p 3000
@@ -277,7 +311,7 @@ goshare -d ./test-data --password testing
 goshare -d ./public -p 8080
 ```
 
-### 🎓 **Education & Training**
+### Education & Training
 ```bash
 # Share course materials
 goshare -d ~/Course-Materials --password students2024
@@ -289,7 +323,7 @@ goshare -d ~/Handouts --ngrok
 goshare -d ~/Workshop-Files
 ```
 
-## 🛠️ Development & Contributing
+## Development & Contributing
 
 ### Project Structure
 ```
@@ -323,7 +357,7 @@ GOOS=darwin GOARCH=amd64 go build -o goshare-macos .
 GOOS=linux GOARCH=amd64 go build -o goshare-linux .
 ```
 
-### 🧪 **Testing**
+### Testing
 ```bash
 # Run tests
 go test ./...
@@ -335,7 +369,7 @@ go test -cover ./...
 go test ./internal/server -v
 ```
 
-### 🤝 **Contributing Guidelines**
+### Contributing Guidelines
 
 1. **Fork** the repository
 2. **Create** a feature branch: `git checkout -b feature-name`
@@ -344,7 +378,7 @@ go test ./internal/server -v
 5. **Update** documentation for any changes
 6. **Submit** a pull request with clear description
 
-### 📋 **Development Setup**
+### Development Setup
 ```bash
 # Install development tools
 go install golang.org/x/tools/cmd/goimports@latest
@@ -357,25 +391,25 @@ go vet ./...
 staticcheck ./...
 ```
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-#### 🚫 **Port Already in Use**
+#### Port Already in Use
 ```bash
 # Error: "bind: address already in use"
 # Solution: Use a different port
 goshare -p 8081
 ```
 
-#### 🌐 **Can't Access from Other Devices**
+#### Can't Access from Other Devices
 ```bash
 # Check firewall settings
 # Ensure devices are on same Wi-Fi network
 # Try different port: goshare -p 8080
 ```
 
-#### 🔐 **ngrok Not Working**
+#### ngrok Not Working
 ```bash
 # Install ngrok first
 # macOS: brew install ngrok
@@ -383,7 +417,7 @@ goshare -p 8081
 # Linux: Download binary from ngrok.com
 ```
 
-#### 📱 **QR Code Not Scanning**
+#### QR Code Not Scanning
 - Ensure good lighting when scanning
 - Try scanning from different angles
 - Use the URL directly if QR doesn't work
@@ -395,7 +429,7 @@ goshare -p 8081
 - **Concurrent Users**: Server handles multiple connections simultaneously
 - **Network Speed**: Performance depends on your Wi-Fi network speed
 
-## 📄 License & Legal
+## License & Legal
 
 This project is licensed under the **MIT License**. See [LICENSE](LICENSE) file for details.
 
@@ -405,7 +439,7 @@ This project is licensed under the **MIT License**. See [LICENSE](LICENSE) file 
 - [Tailwind CSS](https://tailwindcss.com) - MIT License (CDN)
 - [Font Awesome](https://fontawesome.com) - Font Awesome Free License (CDN)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Special thanks to:
 - **Go Team** for the excellent standard library
@@ -413,9 +447,9 @@ Special thanks to:
 - **Contributors** who help improve GoShare
 - **Users** who provide feedback and feature requests
 
-## 📞 Support & Community
+## Support & Community
 
-### 🆘 **Need Help?**
+### Need Help?
 1. **Check** the [FAQ](https://github.com/sudo-init-do/go_share_cli/wiki/FAQ)
 2. **Search** existing [Issues](https://github.com/sudo-init-do/go_share_cli/issues)
 3. **Create** a new issue with:
@@ -424,12 +458,12 @@ Special thanks to:
    - Command you ran
    - Error message or unexpected behavior
 
-### 💬 **Community**
+### Community
 - **GitHub Discussions**: Ask questions and share ideas
 - **Issues**: Report bugs and request features
 - **Pull Requests**: Contribute code improvements
 
-### 📊 **Statistics**
+### Statistics
 - **Platform Support**: Windows, macOS, Linux
 - **Go Version**: 1.24.4+
 - **Dependencies**: Minimal (4 direct dependencies)
@@ -439,10 +473,10 @@ Special thanks to:
 
 <div align="center">
 
-**⭐ Star this repository if GoShare helped you!**
+**Star this repository if GoShare helped you!**
 
-**Made with ❤️ by the GoShare team**
+**Made with care by the GoShare team**
 
-[🏠 Homepage](https://github.com/sudo-init-do/go_share_cli) • [📋 Issues](https://github.com/sudo-init-do/go_share_cli/issues) • [🚀 Releases](https://github.com/sudo-init-do/go_share_cli/releases) • [📖 Wiki](https://github.com/sudo-init-do/go_share_cli/wiki)
+[Homepage](https://github.com/sudo-init-do/go_share_cli) • [Issues](https://github.com/sudo-init-do/go_share_cli/issues) • [Releases](https://github.com/sudo-init-do/go_share_cli/releases) • [Wiki](https://github.com/sudo-init-do/go_share_cli/wiki)
 
 </div>
