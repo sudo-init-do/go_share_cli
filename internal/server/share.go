@@ -10,14 +10,16 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-func StartServer(dir string, port int) {
+func StartServer(dir string, port int, password string) {
 	absDir, err := filepath.Abs(dir)
 	if err != nil {
 		log.Fatalf("Failed to get absolute path: %v", err)
 	}
 
+	// File server
 	fs := http.FileServer(http.Dir(absDir))
-	http.Handle("/", fs)
+	// Wrap with auth middleware if password is set
+	http.Handle("/", applyAuthMiddleware(fs, password))
 
 	ip := getLocalIP()
 	url := fmt.Sprintf("http://%s:%d", ip, port)
@@ -37,12 +39,26 @@ func StartServer(dir string, port int) {
 	}
 }
 
+func applyAuthMiddleware(h http.Handler, password string) http.Handler {
+	if password == "" {
+		return h // no protection
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, pass, ok := r.BasicAuth()
+		if !ok || pass != password {
+			w.Header().Set("WWW-Authenticate", `Basic realm="go_share_cli"`)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
+}
+
 func getLocalIP() string {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	for _, addr := range addrs {
 		if ipnet, ok := addr.(*net.IPNet); ok &&
 			!ipnet.IP.IsLoopback() &&

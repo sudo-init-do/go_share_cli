@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	dir  string
-	port int
+	dir      string
+	port     int
+	password string
 )
 
 var rootCmd = &cobra.Command{
@@ -18,13 +19,14 @@ var rootCmd = &cobra.Command{
 	Short: "Easily share local files over Wi-Fi",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Starting goshare on port %d serving directory: %s\n", port, dir)
-		server.StartServer(dir, port)
+		server.StartServer(dir, port, password)
 	},
 }
 
 func Execute() {
 	rootCmd.PersistentFlags().StringVarP(&dir, "dir", "d", ".", "Directory to share")
 	rootCmd.PersistentFlags().IntVarP(&port, "port", "p", 8080, "Port to run the server on")
+	rootCmd.PersistentFlags().StringVarP(&password, "password", "", "", "Optional password to protect access (Basic Auth)")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
