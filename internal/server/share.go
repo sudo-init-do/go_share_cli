@@ -18,19 +18,19 @@ func StartServer(dir string, port int, password string) {
 
 	// File server
 	fs := http.FileServer(http.Dir(absDir))
-	// Wrap with auth middleware if password is set
+	// Wrap with auth middleware if password provided
 	http.Handle("/", applyAuthMiddleware(fs, password))
 
 	ip := getLocalIP()
 	url := fmt.Sprintf("http://%s:%d", ip, port)
 	fmt.Printf("📂 Serving %s at:\n➡️  %s\n", absDir, url)
 
-	// Generate and display QR code
+	// Generate and display local QR code
 	qr, err := qrcode.New(url, qrcode.Medium)
 	if err != nil {
 		log.Fatalf("QR generation failed: %v", err)
 	}
-	fmt.Println("\n📱 Scan this QR to open:")
+	fmt.Println("\n📱 Scan this QR to open (local):")
 	fmt.Println(qr.ToSmallString(false))
 
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
