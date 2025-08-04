@@ -1,6 +1,6 @@
 module github.com/sudo-init-do/goshare
 
-go 1.24
+go 1.20
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
