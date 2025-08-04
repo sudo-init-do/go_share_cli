@@ -1,0 +1,9 @@
+This is a test file for GoShare!
+
+Features:
+- Beautiful file browser interface
+- File and folder icons
+- Download functionality
+- Password protection support
+- Responsive design with Tailwind CSS
+- QR code generation for easy mobile access
