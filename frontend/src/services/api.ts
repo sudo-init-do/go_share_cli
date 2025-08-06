@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { PageData } from '../types';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8081';
+// Use relative URLs when running in development (proxy will handle routing)
+// Use full URL in production
+const API_BASE = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8081');
 
 const api = axios.create({
   baseURL: API_BASE,

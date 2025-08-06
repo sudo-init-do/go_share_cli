@@ -24,11 +24,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({ onLogout }) => {
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage for theme preference, default to dark
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : true;
+  });
 
   useEffect(() => {
     loadFiles('/');
   }, []);
+
+  useEffect(() => {
+    // Save theme preference
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   const loadFiles = async (path: string = '/') => {
     try {

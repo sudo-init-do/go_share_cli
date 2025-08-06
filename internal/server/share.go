@@ -455,15 +455,13 @@ type FileHandler struct {
 	rootDir   string
 	template  *template.Template
 	serverURL string
+	password  string
 }
 
 // ServeHTTP implements the http.Handler interface
 func (fh *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS for React frontend
-	origin := r.Header.Get("Origin")
-	if origin == "http://localhost:3000" || origin == "http://localhost:8081" || origin == "" {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -473,11 +471,35 @@ func (fh *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Handle auth check endpoint (not protected)
+	// Handle auth check endpoint (not protected by auth middleware but checks auth status)
 	if r.URL.Path == "/api/auth/check" {
 		w.Header().Set("Content-Type", "application/json")
+
+		// Check if user is authenticated
+		isAuthenticated := false
+
+		// If no password is set, everyone is authenticated
+		if fh.password == "" {
+			isAuthenticated = true
+		} else {
+			// Check for valid session cookie
+			if cookie, err := r.Cookie("auth_session"); err == nil && cookie.Value == "authenticated" {
+				isAuthenticated = true
+			} else {
+				// Check basic auth as fallback
+				_, pass, ok := r.BasicAuth()
+				if ok && pass == fh.password {
+					isAuthenticated = true
+				}
+			}
+		}
+
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"authenticated": true}`))
+		if isAuthenticated {
+			w.Write([]byte(`{"authenticated": true}`))
+		} else {
+			w.Write([]byte(`{"authenticated": false}`))
+		}
 		return
 	}
 
@@ -800,28 +822,41 @@ func StartServer(dir string, port int, password string) {
 		rootDir:   absDir,
 		template:  template.Must(template.New("index").Parse(htmlTemplate)),
 		serverURL: url,
+		password:  password,
 	}
 
 	// Set up routes
 	mux := http.NewServeMux()
 
-	// Auth endpoints (not protected)
-	mux.Handle("/api/auth/check", handler)
-	mux.Handle("/login", handler)
-	
-	// Protected API routes
-	mux.Handle("/api/files", applyAuthMiddleware(handler, password))
-	mux.Handle("/upload", applyAuthMiddleware(handler, password))
-
-	// File serving routes (protected by auth)  
-	mux.Handle("/files/", applyAuthMiddleware(handler, password))
-
-	// Serve React build files (check if frontend/build exists)
+	// We'll handle all routing in the main handler function below
+	// No need for individual route handlers since we're using a custom dispatcher	// Serve React build files (check if frontend/build exists)
 	frontendPath := filepath.Join(absDir, "frontend", "build")
 	if _, err := os.Stat(frontendPath); err == nil {
-		// Serve React frontend
-		fs := http.FileServer(http.Dir(frontendPath))
-		mux.Handle("/", fs)
+		// Create a static file server for React
+		reactFS := http.FileServer(http.Dir(frontendPath))
+
+		// Custom handler that routes correctly
+		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			// Check if this is an API route that should be handled by our handlers
+			switch {
+			case strings.HasPrefix(r.URL.Path, "/api/"):
+				handler.ServeHTTP(w, r)
+			case r.URL.Path == "/login":
+				// Login should go through auth middleware to handle the login logic
+				applyAuthMiddleware(handler, password).ServeHTTP(w, r)
+			case r.URL.Path == "/upload":
+				applyAuthMiddleware(handler, password).ServeHTTP(w, r)
+			case strings.HasPrefix(r.URL.Path, "/files/"):
+				applyAuthMiddleware(handler, password).ServeHTTP(w, r)
+			default:
+				// Serve React app - if file doesn't exist, serve index.html for React Router
+				if _, err := os.Stat(filepath.Join(frontendPath, r.URL.Path)); os.IsNotExist(err) && r.URL.Path != "/" {
+					http.ServeFile(w, r, filepath.Join(frontendPath, "index.html"))
+				} else {
+					reactFS.ServeHTTP(w, r)
+				}
+			}
+		})
 		fmt.Printf("🚀 Serving React frontend from: %s\n", frontendPath)
 	} else {
 		// Fallback to original file browser
