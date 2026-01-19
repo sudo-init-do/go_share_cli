@@ -6,19 +6,20 @@ A modern, secure file sharing application with a beautiful React frontend and Go
 
 - 🎨 **Modern React UI**: Beautiful, responsive interface built with React, TypeScript, and Tailwind CSS
 - 🌓 **Dark/Light Mode**: Elegant theme switching with user preference persistence
-- 🔒 **Secure Authentication**: Session-based authentication with HTTP-only cookies
-- 📱 **QR Code Access**: Automatic QR code generation for easy mobile access
-- 📤 **Drag & Drop Upload**: Intuitive file upload with progress feedback
+- 🔒 **Secure Authentication**: Session-based authentication with dynamic HTTP-only tokens and optional Basic Auth
+- 📱 **QR Code Access**: Automatic QR code generation for easy mobile access (Local & Public)
+- 📤 **Drag & Drop Upload**: Intuitive file upload with progress feedback and configurable size limits
 - 🔍 **Real-time Search**: Instant file and folder search functionality
-- 📊 **File Information**: Display file sizes, modification dates, and download counts
-- 🎯 **Download Tracking**: Keep track of how many times files have been downloaded
+- 📊 **File Information**: Display file sizes, modification dates, and real-time download counts
+- 🎯 **Download Tracking**: Keep track of how many times each file has been downloaded during the session
 - 🚀 **Single Binary**: Easy deployment with embedded React build
 - 🌐 **RESTful API**: Clean JSON API for programmatic access
-- 📱 **Mobile Responsive**: Perfect experience on all devices
+- 🗺️ **Public Tunneling**: Built-in `ngrok` support to share files across the internet securely
 
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **React 18** with TypeScript
 - **Tailwind CSS** for styling
 - **Framer Motion** for smooth animations
@@ -27,161 +28,86 @@ A modern, secure file sharing application with a beautiful React frontend and Go
 - **React Dropzone** for file uploads
 
 ### Backend
+
 - **Go** with built-in HTTP server
-- **Session-based authentication**
+- **Session-based authentication** with dynamic tokens
 - **CORS support** for frontend communication
 - **RESTful JSON API**
+- **Zip Compression** for on-the-fly directory downloads
 
 ## 🚀 Quick Start
 
-### Download & Run
-1. Download the latest binary from [Releases](https://github.com/yourusername/goshare/releases)
-2. Make it executable: `chmod +x goshare`
-3. Run: `./goshare --password mypassword ~/Documents`
-4. Open `http://localhost:8081` in your browser
+### Build & Run (Recommended)
 
-### Build from Source
-```bash
-git clone https://github.com/yourusername/goshare.git
-cd goshare
+1. **Prerequisites**: Go 1.21+ and Node.js 18+
+2. **Build everything**:
 
-# Build frontend
-cd frontend && npm install && npm run build && cd ..
+   ```bash
+   # Build the frontend
+   cd frontend && npm install && npm run build && cd ..
 
-# Build Go binary
-go build -o goshare
+   # Build the Go binary
+   go build -o goshare
+   ```
 
-# Run
-./goshare --password mypassword /path/to/share
-```
+3. **Run**:
+   ```bash
+   ./goshare --password mysecurepass /path/to/share
+   ```
+4. **Access**: Scan the QR code in your terminal or open `http://localhost:8081`
 
-## 📖 Usage
+## 📖 How it Works
 
-### Command Line Options
+GoShare is designed to be a "run-and-done" utility.
+
+1. **Local Mode**: When run, it detects your local IP and starts a server. Anyone on your Wi-Fi (who knows your password) can scan the QR code and immediately access/upload files.
+2. **Public Mode**: Use the `--ngrok` flag to generate a public URL. This allows you to share files with someone across the world without configuring port forwarding.
+3. **Security**: Every time the server starts, a unique 32-byte session token is generated. This token is used for session cookies, ensuring that old sessions are invalidated on restart.
+
+## 🖥️ Command Line Options
+
 ```bash
 ./goshare [flags] [directory]
 
 Flags:
   -h, --help              Help for goshare
   -p, --password string   Password for accessing files (optional)
-      --port int          Port to run server on (default 8081)
+      --port int          Port to run server on (default 8080)
+      --max-size int      Maximum upload size in MB (default 100)
+      --ngrok             Expose server to the internet using ngrok
+  -d, --dir string        Directory to share (default ".")
 ```
 
 ### Examples
+
 ```bash
-# Share current directory (no password)
-./goshare
+# Share with 500MB upload limit
+./goshare --password pass --max-size 500
 
-# Share with password protection
-./goshare --password secretpass ~/Documents
-
-# Custom port
-./goshare --port 3000 ~/Downloads
-
-# All options
-./goshare --password mypass --port 9000 ~/Pictures
+# Share over the internet
+./goshare --password pass --ngrok
 ```
-
-## 🖥️ Web Interface
-
-The React frontend provides a modern, intuitive experience:
-
-- **📁 File Browser**: Navigate directories with breadcrumb navigation
-- **🔍 Search**: Real-time search across files and folders
-- **📤 Upload**: Drag files directly onto the interface
-- **🌓 Themes**: Toggle between beautiful dark and light modes
-- **📱 Responsive**: Perfect on desktop, tablet, and mobile
-- **⚡ Fast**: Optimized performance with React best practices
 
 ## 🔐 Security Features
 
-- **Path Validation**: Prevents directory traversal attacks
-- **Session Authentication**: Secure HTTP-only cookie sessions
-- **CORS Protection**: Configured for safe cross-origin requests
-- **Input Sanitization**: All user inputs are validated and sanitized
-- **Local Network**: Accessible only within your local network
-
-## 🔧 API Documentation
-
-GoShare provides a RESTful JSON API:
-
-### Authentication
-```bash
-# Check auth status
-GET /api/auth/check
-
-# Login
-POST /login
-Content-Type: application/x-www-form-urlencoded
-Body: password=yourpassword
-```
-
-### Files
-```bash
-# Get file listing
-GET /api/files?path=/some/directory
-
-# Upload files
-POST /upload
-Content-Type: multipart/form-data
-```
-
-For detailed API documentation, see [CODEBASE.md](CODEBASE.md).
+- **Dynamic Sessions**: Session tokens are randomized on every startup.
+- **Path Validation**: Strict checks prevent directory traversal attacks.
+- **Secure Cookies**: HTTP-only cookies prevent XSS-based token theft.
+- **Sanitized Uploads**: Filenames and paths are cleaned before saving to disk.
 
 ## 🏗️ Development
 
-### Prerequisites
-- Go 1.21+
-- Node.js 18+
-- npm
-
 ### Development Setup
+
 ```bash
 # Backend (terminal 1)
-go run main.go --port 8081 --password dev /path/to/serve
+go run main.go --port 8080 --password dev /path/to/serve
 
 # Frontend development (terminal 2)
 cd frontend
 npm install
-npm start  # Runs on http://localhost:3000
+npm start  # Proxies requests to backend on 8080
 ```
-
-### Building for Production
-```bash
-# Build frontend
-cd frontend && npm run build && cd ..
-
-# Build backend with embedded frontend
-go build -o goshare
-```
-
-## 📚 Documentation
-
-- **[CODEBASE.md](CODEBASE.md)** - Comprehensive technical documentation
-- **Architecture overview** - How frontend and backend work together
-- **API reference** - Complete endpoint documentation
-- **Development guide** - Setup and contribution guidelines
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CODEBASE.md](CODEBASE.md) for:
-- Development setup instructions
-- Code style guidelines
-- Architecture explanations
-- Security considerations
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🎯 Roadmap
-
-- [ ] Multiple file selection for download
-- [ ] File preview for common formats
-- [ ] User management and permissions
-- [ ] File sharing via links
-- [ ] Docker image
-- [ ] HTTPS support
 
 ---
 

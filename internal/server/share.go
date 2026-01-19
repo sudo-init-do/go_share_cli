@@ -2,6 +2,7 @@ package server
 
 import (
 	"archive/zip"
+	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -22,13 +23,14 @@ import (
 
 // FileInfo represents a file or directory for template rendering
 type FileInfo struct {
-	Name    string
-	Path    string
-	Size    int64
-	ModTime time.Time
-	IsDir   bool
-	Icon    string
-	SizeStr string
+	Name          string
+	Path          string
+	Size          int64
+	ModTime       time.Time
+	IsDir         bool
+	Icon          string
+	SizeStr       string
+	DownloadCount int
 }
 
 // API response types for React frontend
@@ -235,6 +237,7 @@ const htmlTemplate = `
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modified</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Downloads</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -247,6 +250,7 @@ const htmlTemplate = `
                                     <a href="{{.ParentPath}}" class="text-blue-600 hover:text-blue-800 font-medium">.. (Parent Directory)</a>
                                 </div>
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
@@ -267,6 +271,13 @@ const htmlTemplate = `
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{.SizeStr}}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{.ModTime.Format "2006-01-02 15:04:05"}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{if not .IsDir}}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        {{.DownloadCount}}
+                                    </span>
+                                {{else}}-{{end}}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 {{if not .IsDir}}
                                     <div class="flex space-x-2">
@@ -291,7 +302,7 @@ const htmlTemplate = `
                         
                         {{if not .Files}}
                         <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
                                 <i class="fas fa-folder-open text-4xl mb-2 text-gray-300"></i>
                                 <p>This directory is empty</p>
                             </td>
@@ -452,10 +463,12 @@ const htmlTemplate = `
 
 // FileHandler handles HTTP requests for file browsing and downloading
 type FileHandler struct {
-	rootDir   string
-	template  *template.Template
-	serverURL string
-	password  string
+	rootDir       string
+	template      *template.Template
+	serverURL     string
+	password      string
+	maxUploadSize int64
+	sessionToken  string
 }
 
 // ServeHTTP implements the http.Handler interface
@@ -483,7 +496,7 @@ func (fh *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			isAuthenticated = true
 		} else {
 			// Check for valid session cookie
-			if cookie, err := r.Cookie("auth_session"); err == nil && cookie.Value == "authenticated" {
+			if cookie, err := r.Cookie("auth_session"); err == nil && cookie.Value == fh.sessionToken {
 				isAuthenticated = true
 			} else {
 				// Check basic auth as fallback
@@ -578,6 +591,17 @@ func (fh *FileHandler) serveFile(w http.ResponseWriter, r *http.Request, fsPath 
 	}
 	defer file.Close()
 
+	// Track download statistics
+	statsMapLock.Lock()
+	stats, ok := fileStatsMap[fsPath]
+	if !ok {
+		stats = &FileStats{}
+		fileStatsMap[fsPath] = stats
+	}
+	stats.DownloadCount++
+	stats.LastAccessed = time.Now()
+	statsMapLock.Unlock()
+
 	http.ServeContent(w, r, stat.Name(), stat.ModTime(), file)
 }
 
@@ -606,6 +630,15 @@ func (fh *FileHandler) serveDirectory(w http.ResponseWriter, r *http.Request, fs
 			Icon:    getFileIcon(info.Name(), info.IsDir()),
 			SizeStr: formatFileSize(info.Size(), info.IsDir()),
 		}
+		// Get download count from stats
+		statsMapLock.RLock()
+		downloadCount := 0
+		if stats, ok := fileStatsMap[filepath.Join(fh.rootDir, strings.TrimPrefix(fileInfo.Path, "/"))]; ok {
+			downloadCount = stats.DownloadCount
+		}
+		statsMapLock.RUnlock()
+
+		fileInfo.DownloadCount = downloadCount
 		files = append(files, fileInfo)
 	}
 
@@ -808,7 +841,7 @@ func getContentType(filename string) string {
 	}
 }
 
-func StartServer(dir string, port int, password string) {
+func StartServer(dir string, port int, password string, maxUploadSize int64) {
 	absDir, err := filepath.Abs(dir)
 	if err != nil {
 		log.Fatalf("Failed to get absolute path: %v", err)
@@ -817,12 +850,21 @@ func StartServer(dir string, port int, password string) {
 	ip := getLocalIP()
 	url := fmt.Sprintf("http://%s:%d", ip, port)
 
+	// Generate a random session token for security
+	sessionTokenBytes := make([]byte, 32)
+	if _, err := rand.Read(sessionTokenBytes); err != nil {
+		log.Fatalf("Failed to generate session token: %v", err)
+	}
+	sessionToken := base64.StdEncoding.EncodeToString(sessionTokenBytes)
+
 	// Custom file handler for API and file serving
 	handler := &FileHandler{
-		rootDir:   absDir,
-		template:  template.Must(template.New("index").Parse(htmlTemplate)),
-		serverURL: url,
-		password:  password,
+		rootDir:       absDir,
+		template:      template.Must(template.New("index").Parse(htmlTemplate)),
+		serverURL:     url,
+		password:      password,
+		maxUploadSize: maxUploadSize,
+		sessionToken:  sessionToken,
 	}
 
 	// Set up routes
@@ -843,11 +885,11 @@ func StartServer(dir string, port int, password string) {
 				handler.ServeHTTP(w, r)
 			case r.URL.Path == "/login":
 				// Login should go through auth middleware to handle the login logic
-				applyAuthMiddleware(handler, password).ServeHTTP(w, r)
+				handler.applyAuthMiddleware(handler).ServeHTTP(w, r)
 			case r.URL.Path == "/upload":
-				applyAuthMiddleware(handler, password).ServeHTTP(w, r)
+				handler.applyAuthMiddleware(handler).ServeHTTP(w, r)
 			case strings.HasPrefix(r.URL.Path, "/files/"):
-				applyAuthMiddleware(handler, password).ServeHTTP(w, r)
+				handler.applyAuthMiddleware(handler).ServeHTTP(w, r)
 			default:
 				// Serve React app - if file doesn't exist, serve index.html for React Router
 				if _, err := os.Stat(filepath.Join(frontendPath, r.URL.Path)); os.IsNotExist(err) && r.URL.Path != "/" {
@@ -860,7 +902,7 @@ func StartServer(dir string, port int, password string) {
 		fmt.Printf("🚀 Serving React frontend from: %s\n", frontendPath)
 	} else {
 		// Fallback to original file browser
-		mux.Handle("/", applyAuthMiddleware(handler, password))
+		mux.Handle("/", handler.applyAuthMiddleware(handler))
 		fmt.Printf("📂 Serving original file browser\n")
 	}
 
@@ -883,9 +925,9 @@ func StartServer(dir string, port int, password string) {
 // handleUpload handles file uploads via drag & drop or file selection
 func (fh *FileHandler) handleUpload(w http.ResponseWriter, r *http.Request) {
 	// Parse the multipart form
-	err := r.ParseMultipartForm(10 << 20) // 10 MB max
+	err := r.ParseMultipartForm(fh.maxUploadSize) // Use configurable max size
 	if err != nil {
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Unable to parse form (max size: %s)", formatFileSize(fh.maxUploadSize, false)), http.StatusBadRequest)
 		return
 	}
 
@@ -1037,13 +1079,21 @@ func (fh *FileHandler) handleAPIFiles(w http.ResponseWriter, r *http.Request) {
 			filePath = "/" + filePath
 		}
 
+		// Get download count from stats
+		statsMapLock.RLock()
+		downloadCount := 0
+		if stats, ok := fileStatsMap[filepath.Join(fh.rootDir, strings.TrimPrefix(filePath, "/"))]; ok {
+			downloadCount = stats.DownloadCount
+		}
+		statsMapLock.RUnlock()
+
 		apiFile := APIFileItem{
 			Name:          info.Name(),
 			Path:          filePath,
 			Size:          info.Size(),
 			IsDir:         info.IsDir(),
 			ModTime:       info.ModTime(),
-			DownloadCount: 0, // TODO: implement download tracking
+			DownloadCount: downloadCount,
 		}
 
 		files = append(files, apiFile)
@@ -1079,8 +1129,8 @@ func (fh *FileHandler) handleAPIFiles(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(pageData)
 }
 
-func applyAuthMiddleware(h http.Handler, password string) http.Handler {
-	if password == "" {
+func (fh *FileHandler) applyAuthMiddleware(h http.Handler) http.Handler {
+	if fh.password == "" {
 		return h // no protection
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1088,11 +1138,11 @@ func applyAuthMiddleware(h http.Handler, password string) http.Handler {
 		if r.Method == "POST" && r.URL.Path == "/login" {
 			r.ParseForm()
 			submittedPassword := r.FormValue("password")
-			if submittedPassword == password {
+			if submittedPassword == fh.password {
 				// Set a session cookie
 				http.SetCookie(w, &http.Cookie{
 					Name:     "auth_session",
-					Value:    "authenticated",
+					Value:    fh.sessionToken,
 					Path:     "/",
 					HttpOnly: true,
 					MaxAge:   86400, // 24 hours
@@ -1111,14 +1161,14 @@ func applyAuthMiddleware(h http.Handler, password string) http.Handler {
 		}
 
 		// Check for valid session cookie
-		if cookie, err := r.Cookie("auth_session"); err == nil && cookie.Value == "authenticated" {
+		if cookie, err := r.Cookie("auth_session"); err == nil && cookie.Value == fh.sessionToken {
 			h.ServeHTTP(w, r)
 			return
 		}
 
 		// Check basic auth as fallback
 		_, pass, ok := r.BasicAuth()
-		if ok && pass == password {
+		if ok && pass == fh.password {
 			h.ServeHTTP(w, r)
 			return
 		}

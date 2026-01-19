@@ -250,6 +250,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({ onLogout }) => {
                       Modified
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Downloads
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -271,6 +274,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({ onLogout }) => {
                           </span>
                         </div>
                       </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">-</td>
                       <td className="px-6 py-4 text-sm text-gray-500">-</td>
                       <td className="px-6 py-4 text-sm text-gray-500">-</td>
                       <td className="px-6 py-4">-</td>
@@ -307,6 +311,13 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({ onLogout }) => {
                       <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(file.modTime)}
                       </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                        {!file.isDir && (
+                          <span className="px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 text-xs font-semibold">
+                            {file.downloadCount}
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4">
                         {!file.isDir && (
                           <div className="flex space-x-2">
@@ -332,7 +343,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({ onLogout }) => {
 
                   {filteredFiles.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                         No files found
                       </td>
                     </tr>

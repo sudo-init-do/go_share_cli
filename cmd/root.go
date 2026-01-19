@@ -16,10 +16,11 @@ import (
 )
 
 var (
-	dir      string
-	port     int
-	password string
-	useNgrok bool
+	dir       string
+	port      int
+	password  string
+	useNgrok  bool
+	maxSizeMB int64
 )
 
 var rootCmd = &cobra.Command{
@@ -28,10 +29,10 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Starting goshare on port %d serving directory: %s\n", port, dir)
 		if useNgrok {
-			startNgrokTunnel(dir, port, password)
+			startNgrokTunnel(dir, port, password, maxSizeMB<<20)
 			return
 		}
-		server.StartServer(dir, port, password)
+		server.StartServer(dir, port, password, maxSizeMB<<20)
 	},
 }
 
@@ -40,6 +41,7 @@ func Execute() {
 	rootCmd.PersistentFlags().IntVarP(&port, "port", "p", 8080, "Port to run the server on")
 	rootCmd.PersistentFlags().StringVarP(&password, "password", "", "", "Optional password to protect access (Basic Auth)")
 	rootCmd.PersistentFlags().BoolVar(&useNgrok, "ngrok", false, "Expose server to the internet using ngrok")
+	rootCmd.PersistentFlags().Int64Var(&maxSizeMB, "max-size", 100, "Maximum upload size in MB")
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -47,9 +49,9 @@ func Execute() {
 	}
 }
 
-func startNgrokTunnel(dir string, port int, password string) {
+func startNgrokTunnel(dir string, port int, password string, maxSize int64) {
 	// Start the local server concurrently (prints local IP + QR)
-	go server.StartServer(dir, port, password)
+	go server.StartServer(dir, port, password, maxSize)
 
 	fmt.Println("📡 Launching ngrok tunnel...")
 
