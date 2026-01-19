@@ -10,18 +10,18 @@
 
 **GoShare CLI** is a modern, lightweight command-line tool that transforms file sharing over Wi-Fi networks. Built with **Go backend** and **React frontend**, it provides an elegant, responsive web interface for browsing, navigating, and downloading files from any device on your network—no cloud storage required.
 
-## ⭐ Why GoShare?
+## Why GoShare?
 
-- 🚀 **One Command Setup** - Get both React frontend and Go backend running instantly
-- ⚛️ **Modern React UI** - Beautiful, responsive interface with TypeScript
-- 🌓 **Dark Mode by Default** - Elegant theme with user preference persistence
-- 📤 **Drag & Drop Uploads** - Intuitive file uploads with progress feedback
-- 🔍 **Real-time Search** - Instant file and folder filtering
-- 📱 **Mobile Responsive** - Perfect experience on all devices
-- 🔒 **Secure by Design** - Session-based auth with HTTP-only cookies
-- 🎯 **Zero Config** - Works immediately with sensible defaults
+- **One Command Setup** - Get both React frontend and Go backend running instantly
+- **Modern React UI** - Beautiful, responsive interface with TypeScript
+- **Dark Mode by Default** - Elegant theme with user preference persistence
+- **Drag & Drop Uploads** - Intuitive file uploads with progress feedback
+- **Real-time Search** - Instant file and folder filtering
+- **Mobile Responsive** - Perfect experience on all devices
+- **Secure by Design** - Session-based auth with HTTP-only cookies
+- **Zero Config** - Works immediately with sensible defaults
 
-## 🚀 One Command Setup (Super Easy!)
+## One Command Setup (Super Easy!)
 
 Get GoShare running with React frontend and Go backend in one command:
 
@@ -37,15 +37,15 @@ cd goshare
 make start-with-password
 ```
 
-**That's it!** 🎉 The script automatically:
+**That's it!** The script automatically:
 
-- ✅ Checks dependencies (Node.js, Go)
-- ✅ Builds Go backend
-- ✅ Installs React dependencies
-- ✅ Starts React dev server (`localhost:3000`)
-- ✅ Starts Go API server (`localhost:8081`)
-- ✅ Shows clear access URLs
-- ✅ Handles cleanup on exit (Ctrl+C)
+- Checks dependencies (Node.js, Go)
+- Builds Go backend
+- Installs React dependencies
+- Starts React dev server (`localhost:3000`)
+- Starts Go API server (`localhost:8081`)
+- Shows clear access URLs
+- Handles cleanup on exit (Ctrl+C)
 
 ### Quick Commands
 
@@ -61,12 +61,12 @@ make start-with-password
 
 ### What You Get
 
-- **🌐 React Frontend**: Modern UI at `http://localhost:3000`
-- **🔧 Go Backend**: RESTful API at `http://localhost:8081`
-- **🌓 Dark Mode**: Beautiful interface that's easy on the eyes
-- **📤 File Uploads**: Drag files directly into the browser
-- **🔍 Live Search**: Find files and folders instantly
-- **📱 Mobile Ready**: Works perfectly on phones and tablets
+- **React Frontend**: Modern UI at http://localhost:3000
+- **Go Backend**: RESTful API at http://localhost:8081
+- **Dark Mode**: Beautiful interface that's easy on the eyes
+- **File Uploads**: Drag files directly into the browser
+- **Live Search**: Find files and folders instantly
+- **Mobile Ready**: Works perfectly on phones and tablets
 
 ### Available Commands
 
@@ -83,24 +83,24 @@ make start-port                    # Port 9000
 make help                          # Show all options
 ```
 
-## 🛠️ Modern Technology Stack
+## Modern Technology Stack
 
 **Frontend (React SPA)**
 
-- ⚛️ **React 18** with TypeScript for type safety
-- 🎨 **Tailwind CSS** for beautiful, responsive design
-- ✨ **Framer Motion** for smooth animations
-- 📤 **React Dropzone** for drag & drop uploads
-- 🔔 **React Hot Toast** for user notifications
-- 🎯 **Heroicons** for consistent iconography
+- **React 18** with TypeScript for type safety
+- **Tailwind CSS** for beautiful, responsive design
+- **Framer Motion** for smooth animations
+- **React Dropzone** for drag & drop uploads
+- **React Hot Toast** for user notifications
+- **Heroicons** for consistent iconography
 
 **Backend (Go API)**
 
-- 🚀 **Go 1.21+** for high-performance file serving
-- 🔒 **Session-based authentication** with HTTP-only cookies
-- 🌐 **RESTful JSON API** for frontend communication
-- 📁 **Efficient file streaming** for large files
-- 🛡️ **CORS-enabled** for secure cross-origin requests
+- **Go 1.21+** for high-performance file serving
+- **Session-based authentication** with HTTP-only cookies
+- **RESTful JSON API** for frontend communication
+- **Efficient file streaming** for large files
+- **CORS-enabled** for secure cross-origin requests
 
 **Architecture**
 
@@ -113,37 +113,37 @@ React Frontend (3000) ──proxy──► Go Backend (8081) ──► File Syst
      └─ Mobile Responsive             └─ QR Code Generation
 ```
 
-## 📸 Beautiful Interface
+## Beautiful Interface
 
 **Dark Mode Login** (Default)
 
 ```
-🌓 Elegant dark theme with smooth animations
-🔒 Secure password authentication
-📱 Mobile-responsive design
+Elegant dark theme with smooth animations
+Secure password authentication
+Mobile-responsive design
 ```
 
 **Modern File Browser**
 
 ```
-📁 Intuitive folder navigation with breadcrumbs
-🔍 Real-time search as you type
-📤 Drag & drop files directly into browser
-🎨 Beautiful file type icons and hover effects
-⚡ Fast loading and smooth transitions
-🌓 Toggle between dark/light themes
+Intuitive folder navigation with breadcrumbs
+Real-time search as you type
+Drag & drop files directly into browser
+Beautiful file type icons and hover effects
+Fast loading and smooth transitions
+Toggle between dark/light themes
 ```
 
 **Key UI Features**
 
-- ✨ **Framer Motion animations** for smooth transitions
-- 🎯 **Instant search filtering** across files and folders
-- 📱 **Touch-friendly** interface for mobile devices
-- 🎨 **Modern gradients** and professional styling
-- 🔔 **Toast notifications** for user feedback
-- ⚡ **Hot reload** during development
+- **Framer Motion animations** for smooth transitions
+- **Instant search filtering** across files and folders
+- **Touch-friendly** interface for mobile devices
+- **Modern gradients** and professional styling
+- **Toast notifications** for user feedback
+- **Hot reload** during development
 
-## 🚀 Getting Started
+## Getting Started
 
 **Three ways to get up and running:**
 
@@ -156,7 +156,7 @@ chmod +x start.sh
 ./start.sh
 ```
 
-✅ **That's it!** Opens automatically at `http://localhost:3000`
+**That's it!** Opens automatically at http://localhost:3000
 
 ### Option 2: Make Commands
 
@@ -179,42 +179,42 @@ npm install && npm start
 
 **All methods include:**
 
-- ✅ Automatic dependency installation
-- ✅ Both React dev server + Go backend
-- ✅ Hot reload for development
-- ✅ Opens browser automatically
-- ✅ Graceful shutdown on Ctrl+C
+- Automatic dependency installation
+- Both React dev server + Go backend
+- Hot reload for development
+- Opens browser automatically
+- Graceful shutdown on exit
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 goshare/
-├── 🚀 start.sh              # One-command startup script
-├── 📋 Makefile              # Development shortcuts
-├── 🔧 go.mod & go.sum       # Go dependencies
-├── 🏠 main.go               # Go backend entry point
-├── 📂 cmd/
+├── start.sh              # One-command startup script
+├── Makefile              # Development shortcuts
+├── go.mod & go.sum       # Go dependencies
+├── main.go               # Go backend entry point
+├── cmd/
 │   └── root.go              # CLI configuration
-├── 🔒 internal/
+├── internal/
 │   └── server/
 │       └── share.go         # Core server logic & APIs
-├── 🎨 frontend/             # React TypeScript app
-│   ├── 📦 package.json      # Node dependencies
-│   ├── ⚙️  vite.config.ts   # Vite configuration
-│   ├── 🎨 tailwind.config.js # Styling configuration
-│   └── 📁 src/
-│       ├── 🏠 App.tsx       # Main React component
-│       ├── 🔐 Login.tsx     # Authentication UI
-│       ├── 📂 FileExplorer.tsx # File browser UI
-│       ├── 🎨 index.css     # Global styles
-│       └── 🚀 main.tsx      # React entry point
-└── 📖 docs/                 # Documentation
+├── frontend/             # React TypeScript app
+│   ├── package.json      # Node dependencies
+│   ├── vite.config.ts   # Vite configuration
+│   ├── tailwind.config.js # Styling configuration
+│   └── src/
+│       ├── App.tsx       # Main React component
+│       ├── Login.tsx     # Authentication UI
+│       ├── FileExplorer.tsx # File browser UI
+│       ├── index.css     # Global styles
+│       └── main.tsx      # React entry point
+└── docs/                 # Documentation
     ├── README.md            # This file
     ├── CODEBASE.md          # Technical details
     └── QUICK_START.md       # Demo guide
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Here's how to get started:
 
@@ -227,27 +227,27 @@ Contributions are welcome! Here's how to get started:
 
 **Development Tips:**
 
-- 🔥 Hot reload is enabled for both React and Go (with `air` or manual restart)
-- 🎨 Tailwind classes rebuild automatically
-- 🧪 Test on multiple devices using the LAN access feature
-- 📱 Check mobile responsiveness using browser dev tools
+- Hot reload is enabled for both React and Go (with air or manual restart)
+- Tailwind classes rebuild automatically
+- Test on multiple devices using the LAN access feature
+- Check mobile responsiveness using browser dev tools
 
-## 📄 License
+## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the MIT License.
 
-## ⭐ Show Your Support
+## Show Your Support
 
 If GoShare helped you, please consider:
 
-- ⭐ **Starring this repository**
-- 🐛 **Reporting bugs** or suggesting features
-- 🔀 **Contributing** improvements
-- 📤 **Sharing** with others who need a simple file server
+- **Starring this repository**
+- **Reporting bugs** or suggesting features
+- **Contributing** improvements
+- **Sharing** with others who need a simple file server
 
 ---
 
-**Made with ❤️ using React + TypeScript + Go**
+**Made with care using React + TypeScript + Go**
 
 _Experience the power of modern web development with the simplicity of one command._
 
@@ -278,7 +278,7 @@ goshare --ngrok
 ### Access from Any Device
 
 - **Scan the QR code** displayed in your terminal
-- **Or visit the URL** shown (e.g., `http://192.168.1.100:8080`)
+- **Or visit the URL** shown (e.g., http://192.168.1.100:8080)
 - **Browse and download** files through the beautiful web interface
 
 ## Features
@@ -327,7 +327,7 @@ goshare --help
 
 ### Option 2: Download Binary
 
-Visit [Releases](https://github.com/sudo-init-do/go_share_cli/releases) and download the binary for your platform.
+Visit Releases and download the binary for your platform.
 
 ### Option 3: Build from Source
 
@@ -359,7 +359,7 @@ goshare
 ```
 
 - Shares all files in your current working directory
-- Server runs on `http://localhost:8080`
+- Server runs on http://localhost:8080
 - Displays QR code for instant mobile access
 
 #### Share Specific Directory
@@ -482,25 +482,25 @@ GoShare's React-powered web interface provides a premium file browsing experienc
 - **Batch Access**: Navigate freely between folders
 - **Secure Serving**: Proper MIME types and headers
 
-## 🖥️ Web Interface Features
+## Web Interface Features
 
 GoShare's web interface provides a premium file browsing experience:
 
-### 🎨 **Modern Design**
+### Modern Design
 
 - **Responsive Layout**: Automatically adapts to screen size
 - **Clean Typography**: Easy-to-read fonts and proper spacing
 - **Professional Styling**: Tailwind CSS for consistent, modern appearance
 - **Mobile Optimized**: Touch-friendly buttons and navigation
 
-### 📋 **File Management**
+### File Management
 
 - **File Type Icons**: Instant visual recognition of file types
 - **Size Information**: Human-readable file sizes (KB, MB, GB)
 - **Modification Dates**: See when files were last changed
 - **Folder Navigation**: Click folders to explore, use breadcrumbs to go back
 
-### 🎯 **Supported File Types**
+### Supported File Types
 
 | Category      | File Types                             | Icon |
 | ------------- | -------------------------------------- | ---- |
@@ -512,14 +512,14 @@ GoShare's web interface provides a premium file browsing experience:
 | **Code**      | Go, Python, JavaScript, C++, Java, PHP | 💻   |
 | **Web**       | HTML, CSS, JSON, XML                   | 🌐   |
 
-### � **Download Options**
+### Download Options
 
 - **Direct Download**: Click file names to view/download
 - **Force Download**: Use download buttons to force file download
 - **Batch Access**: Navigate freely between folders
 - **Secure Serving**: Proper MIME types and headers
 
-## 🔧 How It Works
+## How It Works
 
 ### Architecture Overview
 
@@ -547,14 +547,14 @@ GoShare's web interface provides a premium file browsing experience:
 ### Network Flow
 
 1. **Server Start**: GoShare binds to specified port and discovers local IP
-2. **QR Generation**: Creates QR code linking to `http://[LOCAL_IP]:[PORT]`
+2. **QR Generation**: Creates QR code linking to http://[LOCAL_IP]:[PORT]
 3. **Request Handling**: Custom HTTP handler processes all file requests
 4. **Template Rendering**: Dynamic HTML generation for directory listings
 5. **File Serving**: Secure file downloads with proper headers
 
 ### Performance Features
 
-- **Efficient File Serving**: Uses Go's optimized `http.ServeContent`
+- **Efficient File Serving**: Uses Go's optimized http.ServeContent
 - **Concurrent Connections**: Handles multiple users simultaneously
 - **Memory Efficient**: Streams large files without loading into memory
 - **Fast Directory Listing**: Optimized directory scanning and sorting
@@ -675,9 +675,9 @@ go test ./internal/server -v
 ### Contributing Guidelines
 
 1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature-name`
+2. **Create** a feature branch: git checkout -b feature-name
 3. **Write** tests for new functionality
-4. **Follow** Go best practices and `gofmt` standards
+4. **Follow** Go best practices and gofmt standards
 5. **Update** documentation for any changes
 6. **Submit** a pull request with clear description
 
@@ -691,7 +691,7 @@ go install honnef.co/go/tools/cmd/staticcheck@latest
 # Set up pre-commit hooks
 go mod tidy
 go fmt ./...
-go vet ./...
+go v ./...
 staticcheck ./...
 ```
 
@@ -739,7 +739,7 @@ goshare -p 8081
 
 ## License & Legal
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**. See LICENSE file for details.
 
 ### Dependencies
 
@@ -761,11 +761,11 @@ Special thanks to:
 
 ### Need Help?
 
-1. **Check** the [FAQ](https://github.com/sudo-init-do/go_share_cli/wiki/FAQ)
-2. **Search** existing [Issues](https://github.com/sudo-init-do/go_share_cli/issues)
+1. **Check** the FAQ
+2. **Search** existing Issues
 3. **Create** a new issue with:
    - Operating system and version
-   - Go version (`go version`)
+   - Go version (go version)
    - Command you ran
    - Error message or unexpected behavior
 
