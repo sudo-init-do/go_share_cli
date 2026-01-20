@@ -1,114 +1,127 @@
 # GoShare
 
-A modern, secure file sharing application with a beautiful React frontend and Go backend. Share files over your local network with style and security.
+GoShare is a lightweight, high-performance file sharing utility designed for instant local and public sharing. It combines the raw power of **Go** for file streaming with a modern **React-based** user interface to provide a professional sharing experience without the complexity of cloud storage.
+
+## Key Concepts
+
+Unlike traditional file servers, GoShare focuses on **zero-configuration** and **ephemeral sharing**.
+
+- **Ephemeral Security**: Every session generates a unique cryptographic token. When you stop the server, all access is wiped.
+- **Single Binary Footprint**: The entire React frontend is embedded directly into the Go binary. You can move the executable to any machine and it "just works."
+- **Dual-Mode Access**:
+  - **Local**: Ultra-fast sharing over Wi-Fi/LAN using your internal IP.
+  - **Public**: Secure sharing over the internet via an automated ngrok tunnel, bypassing NAT and firewall hurdles.
 
 ## Features
 
-- **Modern React UI**: Beautiful, responsive interface built with React, TypeScript, and Tailwind CSS
-- **Dark/Light Mode**: Elegant theme switching with user preference persistence
-- **Secure Authentication**: Session-based authentication with dynamic HTTP-only tokens and optional Basic Auth
-- **QR Code Access**: Automatic QR code generation for easy mobile access (Local & Public)
-- **Drag & Drop Upload**: Intuitive file upload with progress feedback and configurable size limits
-- **Real-time Search**: Instant file and folder search functionality
-- **File Information**: Display file sizes, modification dates, and real-time download counts
-- **Download Tracking**: Keep track of how many times each file has been downloaded during the session
-- **Single Binary**: Easy deployment with embedded React build
-- **RESTful API**: Clean JSON API for programmatic access
-- **Public Tunneling**: Built-in ngrok support to share files across the internet securely
+- **Professional React UI**: A responsive, high-performance interface built with React 18 and TypeScript.
+- **Intelligent Theming**: Full dark and light mode support that respects your system settings and persists preferences.
+- **Enhanced Security**:
+  - **Randomized Sessions**: 32-byte cryptographically secure session tokens generated on every launch.
+  - **HTTP-Only Cookies**: Protection against XSS and session hijacking.
+  - **Traversal Protection**: Strict path validation prevents access outside the designated shared folder.
+- **Dynamic File Management**:
+  - **Drag & Drop**: Native-feeling upload experience with real-time progress indicators.
+  - **Smart Search**: Instant, debounced filtering for large directories.
+  - **Zip Downloads**: Download entire directories as compressed archives on-the-fly.
+- **Insights & Tracking**:
+  - **Real-time Stats**: Track download counts and last-access times for every file served.
+- **Connectivity**:
+  - **Instant QR**: Automatic terminal-based QR code generation for mobile devices.
+  - **ngrok Integration**: One-flag internet exposure for global sharing.
 
 ## Technology Stack
 
-### Frontend
+- **Backend**: Go 1.21+ (Standard library, Cobra CLI, go-qrcode)
+- **Frontend**: React 18, Tailwind CSS, Framer Motion, Heroicons, Vite
+- **Storage**: Stateless (in-memory caching for statistics)
 
-- **React 18** with TypeScript
-- **Tailwind CSS** for styling
-- **Framer Motion** for smooth animations
-- **React Hot Toast** for notifications
-- **Heroicons** for beautiful icons
-- **React Dropzone** for file uploads
+## Installation and Setup
 
-### Backend
+### 1. Build from Source (Recommended)
 
-- **Go** with built-in HTTP server
-- **Session-based authentication** with dynamic tokens
-- **CORS support** for frontend communication
-- **RESTful JSON API**
-- **Zip Compression** for on-the-fly directory downloads
-
-## Quick Start
-
-### Build & Run (Recommended)
-
-1. **Prerequisites**: Go 1.21+ and Node.js 18+
-2. **Build everything**:
-
-   ```bash
-   # Build the frontend
-   cd frontend && npm install && npm run build && cd ..
-
-   # Build the Go binary
-   go build -o goshare
-   ```
-
-3. **Run**:
-   ```bash
-   ./goshare --password mysecurepass /path/to/share
-   ```
-4. **Access**: Scan the QR code in your terminal or open http://localhost:8081
-
-## How it Works
-
-GoShare is designed to be a "run-and-done" utility.
-
-1. **Local Mode**: When run, it detects your local IP and starts a server. Anyone on your Wi-Fi (who knows your password) can scan the QR code and immediately access/upload files.
-2. **Public Mode**: Use the --ngrok flag to generate a public URL. This allows you to share files with someone across the world without configuring port forwarding.
-3. **Security**: Every time the server starts, a unique 32-byte session token is generated. This token is used for session cookies, ensuring that old sessions are invalidated on restart.
-
-## Command Line Options
+To build a standalone production binary:
 
 ```bash
-./goshare [flags] [directory]
+# Clone the repository
+git clone https://github.com/sudo-init-do/goshare.git
+cd goshare
 
-Flags:
-  -h, --help              Help for goshare
-  -p, --password string   Password for accessing files (optional)
-      --port int          Port to run server on (default 8080)
-      --max-size int      Maximum upload size in MB (default 100)
-      --ngrok             Expose server to the internet using ngrok
-  -d, --dir string        Directory to share (default ".")
+# Build the frontend assets
+cd frontend && npm install && npm run build && cd ..
+
+# Compile the Go binary with embedded assets
+go build -o goshare main.go
 ```
 
-### Examples
+### 2. Quick Execution
+
+If you have Go installed, you can run it immediately without a build step:
 
 ```bash
-# Share with 500MB upload limit
-./goshare --password pass --max-size 500
-
-# Share over the internet
-./goshare --password pass --ngrok
+go run main.go [directory] --password [secret]
 ```
 
-## Security Features
+## Detailed Usage Guide
 
-- **Dynamic Sessions**: Session tokens are randomized on every startup.
-- **Path Validation**: Strict checks prevent directory traversal attacks.
-- **Secure Cookies**: HTTP-only cookies prevent XSS-based token theft.
-- **Sanitized Uploads**: Filenames and paths are cleaned before saving to disk.
+### Basic Sharing
 
-## Development
-
-### Development Setup
+Share the current folder publicly on your local network:
 
 ```bash
-# Backend (terminal 1)
-go run main.go --port 8080 --password dev /path/to/serve
-
-# Frontend development (terminal 2)
-cd frontend
-npm install
-npm start  # Proxies requests to backend on 8080
+./goshare
 ```
+
+### Secured Sharing
+
+Protect your files with a password and set it on a specific port:
+
+```bash
+./goshare --dir ~/Photos --password my-secret-123 --port 9000
+```
+
+### High-Volume Uploading
+
+If you expect to receive large files (e.g., 2GB videos), increase the upload limit:
+
+```bash
+./goshare --max-size 2048
+```
+
+### Global Internet Sharing
+
+Expose your local folder to anyone in the world via ngrok:
+
+```bash
+./goshare --ngrok --password share-globally
+```
+
+## Command Line Reference
+
+| Flag         | Short | Description                                   | Default       |
+| :----------- | :---- | :-------------------------------------------- | :------------ |
+| `--dir`      | `-d`  | The directory you wish to share               | `.` (current) |
+| `--password` | `-p`  | Access password required for all visitors     | None (Open)   |
+| `--port`     |       | The port the web server will listen on        | `8080`        |
+| `--max-size` |       | Maximum allowed upload size in Megabytes (MB) | `100`         |
+| `--ngrok`    |       | Automatically starts an ngrok tunnel          | `false`       |
+
+## Architecture and Workflow
+
+GoShare acts as a middleware between your file system and the web.
+
+1. **Initialization**: The server scans the target directory and validates permissions.
+2. **Session Gen**: A random token is generated. This token must be present in a cookie (`auth_session`) for any API request to succeed.
+3. **Frontend Serving**: The browser requests the UI. If a password is set, the server interrupts with a custom Login page.
+4. **API Interaction**: The React app communicates with the backend via a RESTful JSON API (`/api/files`, `/api/stats`).
+5. **Streaming**: Files are streamed using `http.ServeContent`, allowing for "range requests" (perfect for seeking in videos).
+
+## Troubleshooting
+
+- **Access Denied (403)**: Ensure the user running GoShare has read permissions for the target directory.
+- **Cannot Scan QR**: Some mobile browsers require the IP to be explicitly trusted if not using HTTPS. Using `--ngrok` provides a valid HTTPS link which fixes this.
+- **Port Conflict**: If port 8080 is taken, use `--port [number]` to specify a free one.
 
 ---
 
-**GoShare** - Share files beautifully. Built using Go and React.
+**GoShare** - The easiest way to move files between devices. Built with code quality and security in mind.
